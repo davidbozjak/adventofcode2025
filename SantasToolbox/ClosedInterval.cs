@@ -5,14 +5,14 @@ namespace SantasToolbox;
 [DebuggerDisplay("{Start} - {End} Length: {Length}")]
 public class ClosedInterval
 {
-    public int Start { get; }
-    public int End { get; }
+    public long Start { get; }
+    public long End { get; }
 
-    public int Length => this.End - this.Start + 1;
+    public long Length => this.End - this.Start + 1;
 
     public double CenterPoint => this.Start + (this.Length / 2.0);
 
-    public ClosedInterval(int start, int end)
+    public ClosedInterval(long start, long end)
     {
         Start = Math.Min(start, end);
         End = Math.Max(start, end);
