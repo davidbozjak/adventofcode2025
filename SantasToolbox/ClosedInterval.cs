@@ -31,7 +31,7 @@ public class ClosedInterval
         return other.Start >= this.Start && other.End <= this.End;
     }
 
-    public bool ContainsPoint(int value)
+    public bool ContainsPoint(long value)
     {
         return value >= this.Start && value <= this.End;
     }
