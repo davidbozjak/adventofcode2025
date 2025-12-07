@@ -14,6 +14,18 @@ public static class ListExtenstions
         return true;
     }
 
+    public static bool AddIfNotNull<T>(this HashSet<T> set, T? element)
+        where T : class
+    {
+        if (element == null)
+        {
+            return false;
+        }
+
+        set.Add(element);
+        return true;
+    }
+
     public static IEnumerable<IList<T>> PermuteList<T>(this IList<T> sequence)
     {
         return Permute(sequence, 0, sequence.Count);
