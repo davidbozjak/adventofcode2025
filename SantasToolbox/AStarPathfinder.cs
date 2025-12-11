@@ -15,7 +15,7 @@ public static class AStarPathfinder
     /// <param name="GetHeuristicCost">A function returning best guess cost from node to end node. Provide 0 for adaptation to Dijkstra's algorithm.</param>
     /// <param name="GetNeighbours">A function that provides all reachable neighbours for each Node</param>
     /// <returns>A List of visited nodes from start to goal, or null if no path could be found</returns>
-    public static List<T>? FindPath<T>(T start, T goal, Func<T, int> GetHeuristicCost, Func<T, IEnumerable<T>> GetNeighbours)
+    public static List<T>? FindPath<T>(T start, T goal, Func<T, int?> GetHeuristicCost, Func<T, IEnumerable<T>> GetNeighbours)
         where T : class, INode, IEquatable<T>
     {
         var openSet = new PriorityQueue<T, int>();
@@ -29,7 +29,7 @@ public static class AStarPathfinder
 
         var fScore = new Dictionary<INode, int>
         {
-            [start] = GetHeuristicCost(start)
+            [start] = GetHeuristicCost(start)!.Value
         };
         
         while (openSet.Count > 0)
@@ -60,10 +60,15 @@ public static class AStarPathfinder
                     cameFrom[neighbour] = current;
                     gScore[neighbour] = tentativeScore;
 
-                    var priority = tentativeScore + GetHeuristicCost(neighbour);
-                    
-                    fScore[neighbour] = priority;
-                    openSet.Enqueue(neighbour, priority); //Considering somehow handling duplicates?
+                    var heuristicCost = GetHeuristicCost(neighbour);
+
+                    if (heuristicCost != null)
+                    {
+                        var priority = tentativeScore + GetHeuristicCost(neighbour);
+
+                        fScore[neighbour] = priority.Value;
+                        openSet.Enqueue(neighbour, priority.Value); //Considering somehow handling duplicates?
+                    }
                 }
             }
         }
@@ -77,7 +82,7 @@ public class CachedPathfinder<T>
 {
     private readonly Dictionary<(T, T), List<T>> memcache = new();
 
-    public List<T> FindPath(T start, T goal, Func<T, int> GetHeuristicCost, Func<T, IEnumerable<T>> GetNeighbours)
+    public List<T> FindPath(T start, T goal, Func<T, int?> GetHeuristicCost, Func<T, IEnumerable<T>> GetNeighbours)
     {
         var key = (start, goal);
 
